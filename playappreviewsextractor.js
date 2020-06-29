@@ -38,11 +38,12 @@ function run () {
             while( pageCount <= max_Hops && no_progress_attempt < max_no_progress_attempt){
                 
                 page.waitFor(100);
-                scrlheight = page_height;
 
                 if(scrlheight == page_height){
                     no_progress_attempt++;
                 }
+
+                scrlheight = page_height;
 
                 urls = await page.evaluate(() => {
                     
@@ -103,6 +104,7 @@ function run () {
 
                 if(csvContent.length > 0){
                     //write file for each hop to save intermediate work
+                    
                     fs.writeFile('playreviews' + pageCount + '.csv', csvContent, function(err) {
                         if(err){
                             console.log('----- error while writing extract file. error = ' + err);
