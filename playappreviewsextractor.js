@@ -28,14 +28,14 @@ function run () {
             const max_no_progress_attempt = 5;
 
             var scrlheight = -1;
-            var count = 0;
+            var pageCount = 0;
             var page_height = 0;
             var no_progress_attempt = 0;
             
             
             var urls = '';
             
-            while( count <= max_Hops && no_progress_attempt < max_no_progress_attempt){
+            while( pageCount <= max_Hops && no_progress_attempt < max_no_progress_attempt){
                 
                 page.waitFor(100);
                 scrlheight = page_height;
@@ -47,6 +47,8 @@ function run () {
                 urls = await page.evaluate(() => {
                     
                     var showMorebutton = document.querySelectorAll(".RveJvd");
+
+                    // if "show more" button is displayed, invoke click
                     if(showMorebutton && showMorebutton.length > 0 && showMorebutton[0].innerText === "SHOW MORE"){
                         showMorebutton[0].click();  //click on show more button
                     }
@@ -54,18 +56,20 @@ function run () {
                         window.scrollTo(0,document.body.scrollHeight);      //infinity scroll
                     }
                 });
-
+                
+                //add delay for additional data load
                 await page.waitFor(hop_delay);
                 
                 // get new page height
                 var bodyHeight = await page.evaluateHandle(() => document.body.scrollHeight);
                 page_height = await bodyHeight.jsonValue();
                 
-                count++;
+                pageCount++;
 
                 //extract data
                 var csvContent = await page.evaluate(() => {
                     
+                    //collate count of records processed
                     if(window.processedItems == undefined) window.processedItems = 0;
 
                     var lstLblNames = document.querySelectorAll(".kx8XBd > .X43Kjb");
@@ -74,7 +78,8 @@ function run () {
                     var lstRatings = document.querySelectorAll(".kx8XBd > div > .nt2C1d > .pf5lIe > div");
                 
                     let csvContent = ""; 
-                
+                    
+                    //restart work from last batch
                     for(var i = window.processedItems; i < lstLblNames.length; i++){
                         /*csvContent += sanitizeString(lstLblNames[i].innerText) + "," 
                                         + lstRatings[i].querySelectorAll(".vQHuPe").length + "," 
@@ -98,7 +103,7 @@ function run () {
 
                 if(csvContent.length > 0){
                     //write file for each hop to save intermediate work
-                    fs.writeFile('playreviews' + count + '.csv', csvContent, function(err) {
+                    fs.writeFile('playreviews' + pageCount + '.csv', csvContent, function(err) {
                         if(err){
                             console.log('----- error while writing extract file. error = ' + err);
                         }
