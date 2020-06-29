@@ -1,4 +1,4 @@
-# Play App Reviews Extractor (playappreviewsextractor)
+# Google Play - App Reviews Extractor (playappreviewsextractor)
 Extract reviews for given google play app
 
 1. Automatically handles infinity scoll and "show more" links to load additional comments
