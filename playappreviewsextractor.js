@@ -6,22 +6,6 @@ function run () {
         try {
             const browser = await puppeteer.launch();
             const page = await browser.newPage();
-            
-            //default value
-            var appLink = 'https://play.google.com/store/apps/details?id=nic.goi.aarogyasetu&hl=en_US';
-
-            if(process.argv.length > 2){
-                appLink = process.argv[2];  //extract url from command line
-            }
-
-            await page.goto(appLink + "&showAllReviews=true"); 
-            await page.setViewport({width: 1920, height: 1080});
-            
-            //select sort option to newest comments (to show them in chronological order)
-            await page.click('div.ry3kXd', {delay: 100});
-            await page.keyboard.press('ArrowUp', {delay: 100});
-            await page.keyboard.press('ArrowUp', {delay: 100});
-            await page.keyboard.press('Enter', {delay: 100});
 
             const hop_delay = 1500;
             const max_Hops = 10000;
@@ -32,8 +16,22 @@ function run () {
             var page_height = 0;
             var no_progress_attempt = 0;
             
+            //default value
+            var appLink = 'https://play.google.com/store/apps/details?id=nic.goi.aarogyasetu&hl=en_US';
+
+            if(process.argv.length > 2){
+                appLink = process.argv[2];  //extract url from command line
+            }
+
+            await page.goto(appLink + "&showAllReviews=true"); 
+            await page.setViewport({width: 1920, height: 1080});    //use desktop resolution
             
-            var urls = '';
+            //select sort option to newest comments (to show them in chronological order)
+            await page.click('div.ry3kXd', {delay: 100});
+            await page.keyboard.press('ArrowUp', {delay: 100});
+            await page.keyboard.press('ArrowUp', {delay: 100});
+            await page.keyboard.press('Enter', {delay: 100});
+
             
             while( pageCount <= max_Hops && no_progress_attempt < max_no_progress_attempt){
                 
@@ -45,7 +43,7 @@ function run () {
 
                 scrlheight = page_height;
 
-                urls = await page.evaluate(() => {
+                await page.evaluate(() => {
                     
                     var showMorebutton = document.querySelectorAll(".RveJvd");
 
@@ -119,7 +117,7 @@ function run () {
             }
 
             browser.close();
-            return resolve(urls);
+            return resolve();
         } catch (e) {
             return reject(e);
         }
