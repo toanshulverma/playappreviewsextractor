@@ -24,7 +24,7 @@ function run () {
             await page.keyboard.press('Enter', {delay: 100});
 
             const hop_delay = 1500;
-            const max_Hops = 1000;
+            const max_Hops = 10000;
             const max_no_progress_attempt = 5;
 
             var scrlheight = -1;
@@ -37,7 +37,7 @@ function run () {
             
             while( pageCount <= max_Hops && no_progress_attempt < max_no_progress_attempt){
                 
-                page.waitFor(100);
+                page.waitFor(100);  //added delayd for page load/ paint
 
                 if(scrlheight == page_height){
                     no_progress_attempt++;
@@ -60,11 +60,7 @@ function run () {
                 
                 //add delay for additional data load
                 await page.waitFor(hop_delay);
-                
-                // get new page height
-                var bodyHeight = await page.evaluateHandle(() => document.body.scrollHeight);
-                page_height = await bodyHeight.jsonValue();
-                
+                 
                 pageCount++;
 
                 //extract data
@@ -111,6 +107,10 @@ function run () {
                         }
                     });
                 }
+
+                 // get new page height
+                 var bodyHeight = await page.evaluateHandle(() => document.body.scrollHeight);
+                 page_height = await bodyHeight.jsonValue();
             }
 
             // show informative message if process exited due to no more content
