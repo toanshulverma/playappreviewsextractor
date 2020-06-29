@@ -9,25 +9,15 @@ function run () {
             //console.log('----process.argv[0] = ' + process.argv[0]);
             //var path = process.argv[0];
 
-            /*
-            var sanitizeString_local = function (desc) {
-                var itemDesc;
-                if (desc) {
-                    itemDesc = desc.replace(/(\r\n|\n|\r|\s+|\t|&nbsp;)/gm,' ');
-                    itemDesc = itemDesc.replace(/,/g, '');
-                    itemDesc = itemDesc.replace(/"/g, '""');
-                    itemDesc = itemDesc.replace(/'/g, '\'');
-                    itemDesc = itemDesc.replace(/ +(?= )/g,'');
-                } else {
-                    itemDesc = '';
-                }
-                return itemDesc;
-            }
-            */
 
-            //await page.exposeFunction('sanitizeString', val => val.replace(/(\r\n|\n|\r|\s+|\t|&nbsp;)/gm,' ').replace(/,/g, '').replace(/"/g, '""').replace(/"/g, '""').replace(/'/g, '\'').replace(/ +(?= )/g,''));
-            
-            await page.goto("https://play.google.com/store/apps/details?id=nic.goi.aarogyasetu&hl=en_US&showAllReviews=true");
+            //default value
+            var appLink = 'https://play.google.com/store/apps/details?id=nic.goi.aarogyasetu&hl=en_US';
+
+            if(process.argv.length > 2){
+                appLink = process.argv[2];
+            }
+
+            await page.goto(appLink + "&showAllReviews=true"); 
             await page.setViewport({width: 1920, height: 1080});
             
             //select sort option to newest comments (to show them in chronological order)
