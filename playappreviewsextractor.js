@@ -37,9 +37,9 @@ function run () {
                 
                 page.waitFor(100);  //added delayd for page load/ paint
 
-                if(scrlheight == page_height){
-                    no_progress_attempt++;
-                }
+                //increment counter if no results retreived, else reset counter to 0
+                no_progress_attempt = (scrlheight == page_height) ? (no_progress_attempt + 1) : 0;
+
 
                 scrlheight = page_height;
 
