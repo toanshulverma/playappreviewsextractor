@@ -6,15 +6,12 @@ function run () {
         try {
             const browser = await puppeteer.launch();
             const page = await browser.newPage();
-            //console.log('----process.argv[0] = ' + process.argv[0]);
-            //var path = process.argv[0];
-
-
+            
             //default value
             var appLink = 'https://play.google.com/store/apps/details?id=nic.goi.aarogyasetu&hl=en_US';
 
             if(process.argv.length > 2){
-                appLink = process.argv[2];
+                appLink = process.argv[2];  //extract url from command line
             }
 
             await page.goto(appLink + "&showAllReviews=true"); 
@@ -25,9 +22,6 @@ function run () {
             await page.keyboard.press('ArrowUp', {delay: 100});
             await page.keyboard.press('ArrowUp', {delay: 100});
             await page.keyboard.press('Enter', {delay: 100});
-
-            //take screenshot
-            //await page.screenshot({path: 'sample.png'});
 
             const hop_delay = 1500;
             const max_Hops = 1000;
@@ -40,7 +34,6 @@ function run () {
             
             
             var urls = '';
-            // scrlheight < page_height &&
             
             while( count <= max_Hops && no_progress_attempt < max_no_progress_attempt){
                 
@@ -53,9 +46,6 @@ function run () {
 
                 urls = await page.evaluate(() => {
                     
-                    //var test= 'is function avilable = ' + (window.loadAllComments !== undefined);
-                    //loadAllComments();
-                    //return test;
                     var showMorebutton = document.querySelectorAll(".RveJvd");
                     if(showMorebutton && showMorebutton.length > 0 && showMorebutton[0].innerText === "SHOW MORE"){
                         showMorebutton[0].click();  //click on show more button
@@ -120,13 +110,6 @@ function run () {
             if(no_progress_attempt >= max_no_progress_attempt){
                 console.log('Exiting as no more page loads available');
             }
-
-            console.log('---(' + count + ')------ scrlheight = ' + scrlheight);
-            console.log('---(' + count + ')------  page_height = ' + page_height);
-
-            
-
-            // await page.screenshot({path: 'sample.png', fullPage : true});
 
             browser.close();
             return resolve(urls);
