@@ -29,21 +29,27 @@ function run () {
             //take screenshot
             //await page.screenshot({path: 'sample.png'});
 
+            const hop_delay = 1500;
+            const max_Hops = 1000;
+            const max_no_progress_attempt = 5;
+
             var scrlheight = -1;
             var count = 0;
-            var hop_delay = 1500;
-            var max_Hops = 1000;
             var page_height = 0;
+            var no_progress_attempt = 0;
+            
             
             var urls = '';
             // scrlheight < page_height &&
             
-            while( count < max_Hops){
+            while( count <= max_Hops && no_progress_attempt < max_no_progress_attempt){
                 
-                console.log('---(' + count + ')------ scrlheight = ' + scrlheight);
-                console.log('---(' + count + ')------  page_height = ' + page_height);
                 page.waitFor(100);
                 scrlheight = page_height;
+
+                if(scrlheight == page_height){
+                    no_progress_attempt++;
+                }
 
                 urls = await page.evaluate(() => {
                     
@@ -100,11 +106,19 @@ function run () {
                     return csvContent;
                 });
 
-                fs.writeFile('playreviews' + count + '.csv', csvContent, function(err) {
-                    if(err){
-                        console.log('----- error while writing extract file. error = ' + err);
-                    }
-                });
+                if(csvContent.length > 0){
+                    //write file for each hop to save intermediate work
+                    fs.writeFile('playreviews' + count + '.csv', csvContent, function(err) {
+                        if(err){
+                            console.log('----- error while writing extract file. error = ' + err);
+                        }
+                    });
+                }
+            }
+
+            // show informative message if process exited due to no more content
+            if(no_progress_attempt >= max_no_progress_attempt){
+                console.log('Exiting as no more page loads available');
             }
 
             console.log('---(' + count + ')------ scrlheight = ' + scrlheight);
