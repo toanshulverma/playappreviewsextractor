@@ -14,7 +14,7 @@ function run () {
             const page = await browser.newPage();
 
             const hop_delay = 1000;
-            const max_Hops = 50;
+            const max_Hops = 10000;
             const max_no_progress_attempt = 5;
 
             var scrlheight = -1;
@@ -41,13 +41,11 @@ function run () {
             
             while( pageCount <= max_Hops && no_progress_attempt < max_no_progress_attempt){
                 
-                //page.waitFor(100);  //added delayd for page load/ paint
-
                 //increment counter if no results retreived, else reset counter to 0
                 no_progress_attempt = (scrlheight == page_height) ? (no_progress_attempt + 1) : 0;
 
-                console.log('---------- scrlheight  = ' + scrlheight);
-                console.log('---------- page_height = ' + page_height);
+                //console.log('---------- scrlheight  = ' + scrlheight);
+                //console.log('---------- page_height = ' + page_height);
 
                 //add delay for additional data load
                 pageCount++;
@@ -55,9 +53,6 @@ function run () {
                 //extract data
                 var csvContent = await page.evaluate(() => {
                     
-                    //collate count of records processed
-                    if(window.processedItems == undefined) window.processedItems = 0;
-
                     var lstLblNames = document.querySelectorAll(".kx8XBd > .X43Kjb");
                     var lstDates = document.querySelectorAll(".kx8XBd > div > .p2TkOb");
                     var lstComments = document.querySelectorAll(".bAhLNe > .UD7Dzf > span:first-child");
@@ -80,8 +75,6 @@ function run () {
                         + lstRatings[i].querySelectorAll(".vQHuPe").length + "," 
                         + valDate + "," 
                         + valComments + "\r\n";
-
-                        window.processedItems++;
                     }
 
                     // remove extracted (processed) nodes to save memory
