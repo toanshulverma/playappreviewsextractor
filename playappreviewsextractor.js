@@ -47,7 +47,6 @@ function run () {
                 //console.log('---------- scrlheight  = ' + scrlheight);
                 //console.log('---------- page_height = ' + page_height);
 
-                //add delay for additional data load
                 pageCount++;
 
                 //extract data
@@ -60,7 +59,6 @@ function run () {
 
                     let csvContent = ""; 
                     
-                    //restart work from last batch
                     for(var i = 0; i < lstLblNames.length; i++){
                         /*csvContent += sanitizeString(lstLblNames[i].innerText) + "," 
                                         + lstRatings[i].querySelectorAll(".vQHuPe").length + "," 
@@ -97,6 +95,7 @@ function run () {
                     });
                 }
 
+                // load more reviews
                 await page.evaluate(() => {
                     
                     var showMorebutton = document.querySelectorAll(".RveJvd");
@@ -119,9 +118,12 @@ function run () {
                 page_height = await bodyHeight.jsonValue();
             }
 
-            // show informative message if process exited due to no more content
+            // show informative message
             if(no_progress_attempt >= max_no_progress_attempt){
                 console.log('Exiting as no more page loads available');
+            }
+            else if(pageCount >= max_Hops){
+                console.log('Max page loads retrieved');
             }
 
             // end browsing session
