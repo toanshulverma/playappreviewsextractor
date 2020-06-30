@@ -13,8 +13,8 @@ function run () {
             const browser = await puppeteer.launch({ dumpio : false});
             const page = await browser.newPage();
 
-            const hop_delay = 1000;
-            const max_Hops = 10000;
+            //const hop_delay = 1000;
+            const max_Hops = 50;
             const max_no_progress_attempt = 5;
 
             var scrlheight = -1;
@@ -44,8 +44,8 @@ function run () {
                 //increment counter if no results retreived, else reset counter to 0
                 no_progress_attempt = (scrlheight == page_height) ? (no_progress_attempt + 1) : 0;
 
-                //console.log('---------- scrlheight  = ' + scrlheight);
-                //console.log('---------- page_height = ' + page_height);
+                //console.log('--attempt(' + pageCount + ')-------- scrlheight  = ' + scrlheight);
+                //console.log('--attempt(' + pageCount + ')-------- page_height = ' + page_height);
 
                 pageCount++;
 
@@ -111,7 +111,13 @@ function run () {
                     }
                 });
 
-                await page.waitFor(hop_delay);
+                //await page.waitFor(hop_delay);
+                try{
+                    await page.waitFor(".kx8XBd", { timeout : 3000, polling : 200});
+                }
+                catch(ex){
+                    console.info("Error while waiting ", ex);
+                }
 
                 // get new page height (after content reload)
                 var bodyHeight = await page.evaluateHandle(() => document.body.scrollHeight);
